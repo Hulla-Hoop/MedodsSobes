@@ -1,26 +1,20 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 )
 
-var users = map[string]string{
-	"user1": "3825c945-8843-4b7d-995e-30b16c173c65",
-	"user2": "019ed7ca-8286-40b8-ac80-1950c92dccfd",
-}
-
-type Credentials struct {
-	GUID string
-}
-
 func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
-	var creds Credentials
 
-	err := json.NewDecoder(r.Body).Decode(&creds)
+	str := r.URL.Query().Get("guid")
+	h.logger.L.Info(str)
+
+	acces, refresh, err := h.service.GetTokens("", str)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
+		h.logger.L.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 
+	http.SetCookie(w, acces)
+	http.SetCookie(w, refresh)
 }

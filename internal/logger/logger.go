@@ -11,7 +11,7 @@ type Logger struct {
 
 func New() *Logger {
 	logger := logrus.New()
-	rr := formatter.NewGelf("hezzl")
+	rr := formatter.NewGelf("medos")
 	logger.SetFormatter(rr)
 	logger.SetLevel(logrus.DebugLevel)
 	return &Logger{
