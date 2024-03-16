@@ -1,6 +1,7 @@
 package main
 
 import (
+	"medos/internal/DB/mongo"
 	"medos/internal/handlers"
 	"medos/internal/logger"
 	"medos/internal/service"
@@ -8,8 +9,10 @@ import (
 )
 
 func main() {
+
 	l := logger.New()
-	s := service.New(l)
+	m := mongo.New(l)
+	s := service.New(l, m)
 	h := handlers.New(l, s)
 
 	http.HandleFunc("/rere", h.SignIn)

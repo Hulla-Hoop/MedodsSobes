@@ -10,7 +10,6 @@ type configDb struct {
 	User     string
 	Password string
 	DBName   string
-	SSLMode  string
 }
 
 func DbNew() *configDb {
@@ -21,6 +20,5 @@ func DbNew() *configDb {
 		User:     os.Getenv("DB_USER"),
 		Password: os.Getenv("DB_PASSWORD"),
 		DBName:   os.Getenv("DB_NAME"),
-		SSLMode:  os.Getenv("DB_SSL"),
 	}
 }

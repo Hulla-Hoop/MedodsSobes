@@ -1,6 +1,7 @@
 package service
 
 import (
+	"medos/internal/DB/mongo"
 	"medos/internal/logger"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -8,11 +9,13 @@ import (
 
 type Service struct {
 	logger *logger.Logger
+	db     *mongo.Mongo
 }
 
-func New(log *logger.Logger) *Service {
+func New(log *logger.Logger, db *mongo.Mongo) *Service {
 	return &Service{
 		logger: log,
+		db:     db,
 	}
 }
 
