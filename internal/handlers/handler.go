@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/base64"
 	"fmt"
+	"medos/internal/config"
 	"medos/internal/logger"
 	"medos/internal/service"
 	"net/http"
@@ -40,8 +41,10 @@ func (h *Handler) Test(w http.ResponseWriter, r *http.Request) {
 
 	claims := &service.Claims{}
 
+	cfg := config.TokenCFG()
+
 	tkn, err := jwt.ParseWithClaims(tknStr, claims, func(token *jwt.Token) (any, error) {
-		return []byte("shamil"), nil
+		return []byte(cfg.SecretKey), nil
 	})
 	if err != nil {
 		if err == jwt.ErrSignatureInvalid {

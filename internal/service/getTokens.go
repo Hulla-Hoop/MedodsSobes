@@ -16,7 +16,7 @@ func (s *Service) GetTokens(reqId string, guid string) (*http.Cookie, *http.Cook
 
 	cfg := config.TokenCFG()
 
-	acces, err := s.createAccessToken(cfg.AccessTTL, cfg.SecretKey, guid)
+	acces, expiretime, err := s.createAccessToken(cfg.AccessTTL, cfg.SecretKey, guid)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -33,16 +33,17 @@ func (s *Service) GetTokens(reqId string, guid string) (*http.Cookie, *http.Cook
 	session.TimeCreatedTocken = timess.String()
 	session.BcryptTocken = string(hash)
 	session.Guid = guid
+	session.ExpireTime = expiretime
 
 	s.db.CreateSess("", &session)
 
 	return acces, refresh, nil
 }
 
-func (s *Service) createAccessToken(accessTTL string, secret string, guid string) (*http.Cookie, error) {
+func (s *Service) createAccessToken(accessTTL string, secret string, guid string) (*http.Cookie, int64, error) {
 	TTL, err := strconv.Atoi(accessTTL)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	expirationTime := time.Now().Add(time.Minute * time.Duration(TTL))
@@ -59,7 +60,7 @@ func (s *Service) createAccessToken(accessTTL string, secret string, guid string
 	jwt, err := token.SignedString([]byte(secret))
 	if err != nil {
 		s.logger.L.Error(err)
-		return nil, err
+		return nil, 0, err
 	}
 
 	acces := &http.Cookie{
@@ -67,7 +68,7 @@ func (s *Service) createAccessToken(accessTTL string, secret string, guid string
 		Value:   jwt,
 		Expires: expirationTime,
 	}
-	return acces, nil
+	return acces, expirationTime.Unix(), nil
 }
 
 func (s *Service) createRefreshToken(refreshTTL string, times string) (string, *http.Cookie, error) {

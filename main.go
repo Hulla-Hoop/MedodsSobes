@@ -6,11 +6,19 @@ import (
 	"medos/internal/logger"
 	"medos/internal/service"
 	"net/http"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
 
 	l := logger.New()
+
+	err := godotenv.Load()
+	if err != nil {
+		l.L.Info("Не загружается .env файл")
+	}
+
 	m := mongo.New(l)
 	s := service.New(l, m)
 	h := handlers.New(l, s)

@@ -17,14 +17,14 @@ func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
 	}
 	tknStr := c.Value
 
-	tn, err := base64.StdEncoding.DecodeString(tknStr)
+	bcryptToken, err := base64.StdEncoding.DecodeString(tknStr)
 	if err != nil {
 		h.logger.L.Error(err)
 	}
-	g, f := h.service.RefreshToken(string(tn))
-	h.logger.L.WithField("handler.Refresh", "").Info("Значение g   ", g)
-	if g {
-		acces, refresh, err := h.service.GetTokens("", f)
+	ok, guid := h.service.RefreshToken(string(bcryptToken))
+	h.logger.L.WithField("handler.Refresh", "").Info("Значение g   ", ok)
+	if ok {
+		acces, refresh, err := h.service.GetTokens("", guid)
 		if err != nil {
 			h.logger.L.WithField("handler.Refresh", "").Error(err)
 			w.WriteHeader(http.StatusBadRequest)
