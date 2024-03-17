@@ -41,10 +41,6 @@ bcrypt — адаптивная криптографическая хеш-фун
 3) В случае успеха выдает новую пару токенов в пративном статус 400
 4) Удаляет старую сессию исключая возможность повторного использовани старого рефреш токена и создает новую сессию
 
-# Test handle (/test)
-1) Проверяет есть ли access токен 
-2) Выводит имя пользователя из payload 
-   
 Сессия хранится в Mongo текущие поля  
 ``` 
 type Session struct {
@@ -57,12 +53,18 @@ type Session struct {
 
 ```
 
+# Test handle (/test)
+1) Проверяет есть ли access токен 
+2) Выводит имя пользователя из payload 
+   
+
+
 
 
 Материалы:
 
-JWT и Refresh токены в Golang 🚀На реальном примере -- https://www.youtube.com/watch?v=Y41nrrMcOew
-Про токены, JSON Web Tokens (JWT), аутентификацию и авторизацию. Token-Based Authentication-- https://gist.github.com/zmts/802dc9c3510d79fd40f9dc38a12bccfc
-JWT.IO allows you to decode, verify and generate JWT. -- https://jwt.io
-Implementing JWT based authentication in Golang -- https://www.sohamkamani.com/golang/jwt-authentication/
-Пять простых шагов для понимания JSON Web Tokens (JWT) -- https://habr.com/ru/articles/340146/
+ - JWT и Refresh токены в Golang 🚀На реальном примере -- https://www.youtube.com/watch?v=Y41nrrMcOew
+ - Про токены, JSON Web Tokens (JWT), аутентификацию и авторизацию. Token-Based Authentication-- https://gist.github.com/zmts/802dc9c3510d79fd40f9dc38a12bccfc
+ - JWT.IO allows you to decode, verify and generate JWT. -- https://jwt.io
+ - Implementing JWT based authentication in Golang -- https://www.sohamkamani.com/golang/jwt-authentication/
+ - Пять простых шагов для понимания JSON Web Tokens (JWT) -- https://habr.com/ru/articles/340146/
