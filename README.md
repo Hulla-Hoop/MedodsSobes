@@ -46,15 +46,16 @@ bcrypt — адаптивная криптографическая хеш-фун
 2) Выводит имя пользователя из payload 
    
 Сессия хранится в Mongo текущие поля  
-``` type Session struct {
+``` 
+type Session struct {
     ID                 автоматически создается монго
 	BcryptTocken      string `bson:"bcryptTocken"`  Хранится в виде bcrypt хеша клиенту выдается в виде base 64
 	TimeCreatedTocken string `bson:"timeCreatedTocken"` Пока не придумал зачем добавил 
 	Guid              string `bson:"guid"`  Для проверки принадлежности рефреш токена
 	ExpireTime        int64  `bson:"expiretime"` Для удаления устаревших сессий
-} ```
+} 
 
-
+```
 
 
 
