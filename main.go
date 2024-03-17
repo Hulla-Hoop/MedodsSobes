@@ -1,10 +1,10 @@
 package main
 
 import (
-	"medos/internal/DB/mongo"
-	"medos/internal/handlers"
-	"medos/internal/logger"
-	"medos/internal/service"
+	"medods/internal/DB/mongo"
+	"medods/internal/handlers"
+	"medods/internal/logger"
+	"medods/internal/service"
 	"net/http"
 
 	"github.com/joho/godotenv"

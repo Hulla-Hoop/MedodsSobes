@@ -3,9 +3,9 @@ package handlers
 import (
 	"encoding/base64"
 	"fmt"
-	"medos/internal/config"
-	"medos/internal/logger"
-	"medos/internal/service"
+	"medods/internal/config"
+	"medods/internal/logger"
+	"medods/internal/service"
 	"net/http"
 
 	"github.com/golang-jwt/jwt/v4"

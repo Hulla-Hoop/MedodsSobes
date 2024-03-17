@@ -2,7 +2,7 @@ package mongo
 
 import (
 	"context"
-	"medos/internal/model"
+	"medods/internal/model"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

@@ -2,8 +2,8 @@ package mongo
 
 import (
 	"context"
-	"medos/internal/config"
-	"medos/internal/logger"
+	"medods/internal/config"
+	"medods/internal/logger"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

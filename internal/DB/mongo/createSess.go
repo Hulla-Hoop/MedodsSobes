@@ -2,7 +2,7 @@ package mongo
 
 import (
 	"context"
-	"medos/internal/model"
+	"medods/internal/model"
 )
 
 func (m *Mongo) CreateSess(reqId string, session *model.Session) error {

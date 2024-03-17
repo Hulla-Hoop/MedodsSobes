@@ -1,4 +1,4 @@
-# MedosSobes
+# MedodsSobes
 
 # Немного теории
 

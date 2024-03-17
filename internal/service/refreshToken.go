@@ -1,6 +1,6 @@
 package service
 
-import "medos/internal/model"
+import "medods/internal/model"
 
 // возращает guid пользователя если его сессия есть в базе
 func (s *Service) RefreshToken(reqID string, token string) (bool, string) {

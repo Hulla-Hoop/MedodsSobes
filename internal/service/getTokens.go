@@ -2,8 +2,8 @@ package service
 
 import (
 	"encoding/base64"
-	"medos/internal/config"
-	"medos/internal/model"
+	"medods/internal/config"
+	"medods/internal/model"
 	"net/http"
 	"strconv"
 	"time"

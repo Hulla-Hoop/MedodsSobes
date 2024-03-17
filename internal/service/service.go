@@ -1,8 +1,8 @@
 package service
 
 import (
-	"medos/internal/DB/mongo"
-	"medos/internal/logger"
+	"medods/internal/DB/mongo"
+	"medods/internal/logger"
 
 	"github.com/golang-jwt/jwt/v4"
 )
