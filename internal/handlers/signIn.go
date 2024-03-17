@@ -7,16 +7,22 @@ import (
 )
 
 func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
+
+	reqID := r.Context().Value("reqID").(string)
+	if reqID == "" {
+		reqID = ""
+	}
+
 	guid := r.URL.Query().Get("guid")
 	c, err := r.Cookie("Refresh")
 	ok := errors.Is(err, http.ErrNoCookie)
 
 	if ok {
-		h.logger.L.Info(guid)
+		h.logger.L.WithField("Handler.SingIn", reqID).Debug("Полученый guid ---- ", guid)
 
-		acces, refresh, err := h.service.GetTokens("", guid)
+		acces, refresh, err := h.service.GetTokens(reqID, guid)
 		if err != nil {
-			h.logger.L.Error(err)
+			h.logger.L.WithField("Handler.SingIn", reqID).Error(err)
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 
@@ -30,7 +36,7 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 			h.logger.L.Error(err)
 		}
 
-		sess, err := h.service.ChekSess("", string(bcryptToken))
+		sess, err := h.service.ChekSess(reqID, string(bcryptToken))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 		}
@@ -41,9 +47,9 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 		} else {
 			h.logger.L.Info(guid)
 
-			acces, refresh, err := h.service.GetTokens("", guid)
+			acces, refresh, err := h.service.GetTokens(reqID, guid)
 			if err != nil {
-				h.logger.L.Error(err)
+				h.logger.L.WithField("Handler.SingIn", reqID).Error(err)
 				w.WriteHeader(http.StatusInternalServerError)
 			}
 

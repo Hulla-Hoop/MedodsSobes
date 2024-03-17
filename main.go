@@ -23,9 +23,11 @@ func main() {
 	s := service.New(l, m)
 	h := handlers.New(l, s)
 
-	http.HandleFunc("/rere", h.SignIn)
-	http.HandleFunc("/test", h.Test)
-	http.HandleFunc("/refresh", h.Refresh)
+	go s.ClearSession()
+
+	http.HandleFunc("/signin", h.ReqID(h.SignIn))
+	http.HandleFunc("/test", h.ReqID(h.Test))
+	http.HandleFunc("/refresh", h.ReqID(h.Refresh))
 
 	http.ListenAndServe(":8080", nil)
 

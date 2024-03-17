@@ -1,5 +1,11 @@
 package service
 
-func (s *Service) ClearSession() {
+import "time"
 
+// Чистит базу от устаревших сессий
+func (s *Service) ClearSession() {
+	for {
+		time.Sleep(time.Minute * 5)
+		s.db.DeleteOld()
+	}
 }

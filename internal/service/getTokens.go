@@ -16,14 +16,14 @@ func (s *Service) GetTokens(reqId string, guid string) (*http.Cookie, *http.Cook
 
 	cfg := config.TokenCFG()
 
-	acces, expiretime, err := s.createAccessToken(cfg.AccessTTL, cfg.SecretKey, guid)
+	acces, err := s.createAccessToken(reqId, cfg.AccessTTL, cfg.SecretKey, guid)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	timess := time.Now()
 
-	hash, refresh, err := s.createRefreshToken(cfg.RefreshTTL, timess.String())
+	hash, refresh, expiretime, err := s.createRefreshToken(reqId, cfg.RefreshTTL, timess.String())
 	if err != nil {
 		return nil, nil, err
 	}
@@ -35,21 +35,21 @@ func (s *Service) GetTokens(reqId string, guid string) (*http.Cookie, *http.Cook
 	session.Guid = guid
 	session.ExpireTime = expiretime
 
-	s.db.CreateSess("", &session)
+	s.db.CreateSess(reqId, &session)
 
 	return acces, refresh, nil
 }
 
-func (s *Service) createAccessToken(accessTTL string, secret string, guid string) (*http.Cookie, int64, error) {
+func (s *Service) createAccessToken(reqID string, accessTTL string, secret string, guid string) (*http.Cookie, error) {
 	TTL, err := strconv.Atoi(accessTTL)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 
 	expirationTime := time.Now().Add(time.Minute * time.Duration(TTL))
 
 	claims := &Claims{
-		Username: users[guid],
+		Username: model.Users[guid],
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
@@ -59,8 +59,8 @@ func (s *Service) createAccessToken(accessTTL string, secret string, guid string
 
 	jwt, err := token.SignedString([]byte(secret))
 	if err != nil {
-		s.logger.L.Error(err)
-		return nil, 0, err
+		s.logger.L.WithField("Service.CreateAccessToken", reqID).Error(err)
+		return nil, err
 	}
 
 	acces := &http.Cookie{
@@ -68,32 +68,34 @@ func (s *Service) createAccessToken(accessTTL string, secret string, guid string
 		Value:   jwt,
 		Expires: expirationTime,
 	}
-	return acces, expirationTime.Unix(), nil
+	return acces, nil
 }
 
-func (s *Service) createRefreshToken(refreshTTL string, times string) (string, *http.Cookie, error) {
+func (s *Service) createRefreshToken(reqID string, refreshTTL string, times string) (string, *http.Cookie, int64, error) {
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(times), bcrypt.DefaultCost)
 	if err != nil {
-		return "", nil, err
+		return "", nil, 0, err
 	}
 
-	s.logger.L.WithField("Service.Gettoken", "").Info("sha3 string -----", string(hash))
+	s.logger.L.WithField("Service.Gettoken", reqID).Debug("sha3 string -----", string(hash))
 
 	ref := base64.StdEncoding.EncodeToString(hash)
 
-	s.logger.L.WithField("Service.Gettoken", "").Info("Base64 string -----", ref)
+	s.logger.L.WithField("Service.Gettoken", reqID).Debug("Base64 string -----", ref)
 
 	TTL, err := strconv.Atoi(refreshTTL)
 	if err != nil {
-		return "", nil, err
+		return "", nil, 0, err
 	}
+
+	expire := time.Now().Add(time.Minute * time.Duration(TTL))
 
 	refresh := &http.Cookie{
 		Name:     "Refresh",
 		Value:    ref,
-		Expires:  time.Now().Add(time.Minute * time.Duration(TTL)),
+		Expires:  expire,
 		HttpOnly: true,
 	}
-	return string(hash), refresh, nil
+	return string(hash), refresh, expire.Unix(), nil
 }

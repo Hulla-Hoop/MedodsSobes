@@ -23,12 +23,19 @@ func New(log *logger.Logger, serv *service.Service) *Handler {
 	}
 }
 
+// Функция для тестирования: берет токен из куки и распечатывает имя пользователя из пэйлоуда
+// также логирует рефреш токен
 func (h *Handler) Test(w http.ResponseWriter, r *http.Request) {
 
+	reqID := r.Context().Value("reqID").(string)
+	if reqID == "" {
+		reqID = ""
+	}
+
+	//проверка наличиия токена доступа
 	c, err := r.Cookie("token")
 	if err != nil {
 		if err == http.ErrNoCookie {
-
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
@@ -58,7 +65,7 @@ func (h *Handler) Test(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-
+	//проверка наличия рефреш токена
 	ref, err := r.Cookie("Refresh")
 	if err != nil {
 		if err == http.ErrNoCookie {
@@ -76,7 +83,7 @@ func (h *Handler) Test(w http.ResponseWriter, r *http.Request) {
 		h.logger.L.Error(err)
 	}
 
-	h.logger.L.Info("Sha3 strinng from test --", string(re))
+	h.logger.L.WithField("Handler.Test", reqID).Debug("Sha3 strinng from test --", string(re))
 
 	w.Write([]byte(fmt.Sprintf("Welcome %s!", claims.Username)))
 }

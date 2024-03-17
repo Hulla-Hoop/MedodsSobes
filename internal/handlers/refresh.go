@@ -6,6 +6,11 @@ import (
 )
 
 func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
+	reqID := r.Context().Value("reqID").(string)
+	if reqID == "" {
+		reqID = ""
+	}
+
 	c, err := r.Cookie("Refresh")
 	if err != nil {
 		if err == http.ErrNoCookie {
@@ -19,14 +24,14 @@ func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
 
 	bcryptToken, err := base64.StdEncoding.DecodeString(tknStr)
 	if err != nil {
-		h.logger.L.Error(err)
+		h.logger.L.WithField("Handler.Refresh", reqID).Error(err)
 	}
-	ok, guid := h.service.RefreshToken(string(bcryptToken))
-	h.logger.L.WithField("handler.Refresh", "").Info("Значение g   ", ok)
+	ok, guid := h.service.RefreshToken(reqID, string(bcryptToken))
+	h.logger.L.WithField("Handler.Refresh", reqID).Info("Значение ok   ", ok)
 	if ok {
-		acces, refresh, err := h.service.GetTokens("", guid)
+		acces, refresh, err := h.service.GetTokens(reqID, guid)
 		if err != nil {
-			h.logger.L.WithField("handler.Refresh", "").Error(err)
+			h.logger.L.WithField("handler.Refresh", reqID).Error(err)
 			w.WriteHeader(http.StatusBadRequest)
 		}
 		http.SetCookie(w, acces)
