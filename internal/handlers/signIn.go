@@ -8,8 +8,8 @@ import (
 
 func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 
-	reqID := r.Context().Value("reqID").(string)
-	if reqID == "" {
+	reqID, oks := r.Context().Value("reqID").(string)
+	if !oks {
 		reqID = ""
 	}
 
